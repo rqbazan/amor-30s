@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-PE">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tenés una invitación 💌</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tienes una invitación 💌</title>
 
-  <!-- Vista previa al compartir el link por WhatsApp: a propósito no revela nada -->
-  <meta property="og:title" content="Tenés una invitación 💌" />
-  <meta property="og:description" content="Tocá para abrirla. Es secreto 🤫" />
+  <!-- Vista previa al compartir por WhatsApp: a propósito no revela nada -->
+  <meta property="og:title" content="Tienes una invitación 💌" />
+  <meta property="og:description" content="Toca para abrirla. Es secreto 🤫" />
   <meta name="theme-color" content="#141230" />
 
   <style>
@@ -18,6 +18,7 @@
       --ink: #2b2350;
       --ink-soft: #6b628f;
       --gold: #d4a944;
+      --gold-deep: #b8860b;
       --gold-soft: #f0d68a;
       --accent: #e5537a;
       --wa: #21b858;
@@ -26,16 +27,20 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html, body { height: 100%; }
+    html { height: 100%; }
 
+    /* Base = móvil. Los @media de abajo solo agrandan para pantallas mayores. */
     body {
+      min-height: 100vh;
+      min-height: 100dvh;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: radial-gradient(120% 100% at 50% 0%, var(--bg-2) 0%, var(--bg) 70%);
+      background: radial-gradient(140% 100% at 50% 0%, var(--bg-2) 0%, var(--bg) 70%);
       color: var(--ink);
       display: grid;
       place-items: center;
-      padding: 24px 16px;
+      padding: calc(16px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom));
       overflow-x: hidden;
+      overscroll-behavior: none;
     }
 
     .serif { font-family: Georgia, "Times New Roman", serif; }
@@ -44,7 +49,6 @@
     .star {
       position: fixed;
       color: var(--gold-soft);
-      opacity: .5;
       animation: twinkle 3s ease-in-out infinite;
       pointer-events: none;
       user-select: none;
@@ -56,7 +60,8 @@
 
     /* ---------- Escena ---------- */
     .scene {
-      width: min(420px, 100%);
+      width: 100%;
+      max-width: 420px;
       text-align: center;
       position: relative;
       z-index: 1;
@@ -68,50 +73,88 @@
       border: none;
       background: none;
       width: 100%;
+      padding: 24px 8px;
       color: var(--gold-soft);
       -webkit-tap-highlight-color: transparent;
+      transition: opacity .3s ease;
+    }
+    .envelope .halo {
+      position: relative;
+      display: inline-block;
+    }
+    /* Anillo que pulsa alrededor del sobre, invita a tocar */
+    .envelope .halo::before,
+    .envelope .halo::after {
+      content: "";
+      position: absolute;
+      inset: -18px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gold-soft);
+      opacity: 0;
+      animation: ring 2.4s ease-out infinite;
+    }
+    .envelope .halo::after { animation-delay: 1.2s; }
+    @keyframes ring {
+      0%   { transform: scale(.7); opacity: .5; }
+      100% { transform: scale(1.35); opacity: 0; }
     }
     .envelope .flap {
-      font-size: 96px;
+      font-size: 84px;
       line-height: 1;
       display: block;
       animation: float 2.6s ease-in-out infinite;
-      filter: drop-shadow(0 12px 24px rgba(0,0,0,.45));
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .45));
     }
     @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(-10px); }
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50%      { transform: translateY(-10px) rotate(2deg); }
     }
     .envelope .hint {
-      margin-top: 22px;
+      display: block;
+      margin-top: 26px;
       font-size: 15px;
       letter-spacing: .16em;
       text-transform: uppercase;
       opacity: .85;
     }
     .envelope .sub {
+      display: block;
       margin-top: 8px;
       font-size: 13px;
       color: #b9b2dd;
+    }
+
+    /* Pop de salida al tocar el sobre */
+    .envelope.pop { pointer-events: none; }
+    .envelope.pop .flap {
+      animation: pop .38s cubic-bezier(.5, 1.5, .6, 1) forwards;
+    }
+    .envelope.pop .hint,
+    .envelope.pop .sub,
+    .envelope.pop .halo::before,
+    .envelope.pop .halo::after { opacity: 0; transition: opacity .2s ease; animation: none; }
+    @keyframes pop {
+      35%  { transform: scale(1.18) rotate(0deg); opacity: 1; }
+      100% { transform: scale(.4) rotate(8deg); opacity: 0; }
     }
 
     /* ---------- Tarjeta ---------- */
     .card {
       background: var(--card);
       border-radius: 18px;
-      padding: 40px 28px 34px;
+      padding: 34px 22px 30px;
       box-shadow: 0 30px 60px rgba(0, 0, 0, .5);
       display: none;
       opacity: 0;
-      transform: translateY(26px) scale(.96);
-      transition: opacity .6s ease, transform .6s cubic-bezier(.2, .9, .3, 1.2);
+      transform: translateY(34px) scale(.94);
+      transition: opacity .55s ease, transform .65s cubic-bezier(.2, .9, .25, 1.15);
       position: relative;
       overflow: hidden;
     }
     .card::before {
       content: "";
       position: absolute;
-      inset: 10px;
+      inset: 9px;
       border: 1px solid var(--gold);
       border-radius: 12px;
       pointer-events: none;
@@ -121,10 +164,15 @@
     .scene.open .card { display: block; }
     .scene.open .card.in { opacity: 1; transform: translateY(0) scale(1); }
 
-    .shh {
-      font-size: 44px;
-      line-height: 1;
+    /* Contenido en cascada: cada bloque entra con su propio delay (--d) */
+    .card .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .5s ease var(--d, 0s), transform .5s cubic-bezier(.2, .8, .3, 1.1) var(--d, 0s);
     }
+    .scene.open .card.in .reveal { opacity: 1; transform: none; }
+
+    .shh { font-size: 42px; line-height: 1; }
     .kicker {
       margin-top: 14px;
       font-size: 12px;
@@ -135,16 +183,26 @@
     }
     h1 {
       margin-top: 12px;
-      font-size: clamp(30px, 9vw, 40px);
+      font-size: clamp(28px, 8.5vw, 40px);
       font-weight: 400;
       color: var(--ink);
     }
+    /* Nombre con brillo dorado que recorre el texto */
     h1 em {
       font-style: italic;
-      color: var(--gold);
+      background: linear-gradient(100deg, var(--gold-deep) 20%, var(--gold-soft) 50%, var(--gold) 80%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 3.2s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% 0; }
+      50%      { background-position: 100% 0; }
     }
     .divider {
-      margin: 20px auto;
+      margin: 18px auto;
       width: 70px;
       height: 1px;
       background: var(--gold);
@@ -163,7 +221,7 @@
       font-size: 11px;
     }
     .body-text {
-      font-size: 16.5px;
+      font-size: 16px;
       line-height: 1.65;
       color: var(--ink-soft);
       max-width: 34ch;
@@ -172,28 +230,51 @@
     .body-text strong { color: var(--ink); }
 
     .cta {
-      display: inline-flex;
+      display: flex;
+      width: 100%;
       align-items: center;
+      justify-content: center;
       gap: 10px;
-      margin-top: 26px;
+      margin-top: 24px;
       background: linear-gradient(180deg, var(--wa), var(--wa-dark));
       color: #fff;
       text-decoration: none;
       font-size: 17px;
       font-weight: 600;
-      padding: 15px 28px;
+      min-height: 52px;
+      padding: 14px 24px;
       border-radius: 100px;
       box-shadow: 0 10px 24px rgba(23, 149, 63, .35);
       transition: transform .15s ease, box-shadow .15s ease;
+      animation: heartbeat 2.8s ease-in-out 1.6s infinite;
     }
-    .cta:active { transform: scale(.97); box-shadow: 0 5px 14px rgba(23, 149, 63, .35); }
+    @keyframes heartbeat {
+      0%, 20%, 100% { transform: scale(1); }
+      6%  { transform: scale(1.035); }
+      12% { transform: scale(1); }
+      16% { transform: scale(1.02); }
+    }
+    .cta:active {
+      transform: scale(.97);
+      box-shadow: 0 5px 14px rgba(23, 149, 63, .35);
+      animation: none;
+    }
     .cta svg { width: 22px; height: 22px; flex: none; }
 
     .fine-print {
-      margin-top: 18px;
+      margin-top: 16px;
       font-size: 12.5px;
       color: var(--ink-soft);
       opacity: .8;
+    }
+
+    /* ---------- Pantallas más grandes ---------- */
+    @media (min-width: 480px) {
+      .card { padding: 42px 32px 36px; }
+      .envelope .flap { font-size: 96px; }
+      .body-text { font-size: 16.5px; }
+      .cta { display: inline-flex; width: auto; padding: 15px 30px; }
+      .cta:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(23, 149, 63, .4); }
     }
 
     /* ---------- Confetti ---------- */
@@ -205,8 +286,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .envelope .flap, .star { animation: none; }
-      .card { transition: opacity .3s ease; }
+      .envelope .flap, .star, .halo::before, .halo::after, .cta, h1 em { animation: none !important; }
+      .card, .card .reveal { transition-duration: .25s; transition-delay: 0s; }
     }
   </style>
 </head>
@@ -218,27 +299,27 @@
 
     <!-- Sobre cerrado -->
     <button class="envelope" id="openBtn" aria-label="Abrir invitación">
-      <span class="flap">💌</span>
-      <span class="hint serif">Tenés una invitación</span>
-      <span class="sub">Tocá el sobre para abrirla</span>
+      <span class="halo"><span class="flap">💌</span></span>
+      <span class="hint serif">Tienes una invitación</span>
+      <span class="sub">Toca el sobre para abrirla</span>
     </button>
 
     <!-- Tarjeta -->
     <section class="card" id="card" aria-hidden="true">
-      <div class="shh">🤫</div>
-      <p class="kicker">Shhh… es secreto</p>
-      <h1 class="serif">Fiesta sorpresa<br />para <em>Dayanne</em></h1>
-      <div class="divider"></div>
-      <p class="body-text">
-        Se vienen sus <strong>30</strong> y lo vamos a celebrar como se merece.
-        Sumate al grupo de WhatsApp para coordinar todo:
-        fecha, lugar y los detalles van por ahí.
+      <div class="shh reveal" style="--d: .05s">🤫</div>
+      <p class="kicker reveal" style="--d: .15s">Shhh… es secreto</p>
+      <h1 class="serif reveal" style="--d: .25s">Fiesta sorpresa<br />para <em>Dayanne</em></h1>
+      <div class="divider reveal" style="--d: .35s"></div>
+      <p class="body-text reveal" style="--d: .45s">
+        Se vienen sus <strong>30</strong> y lo vamos a celebrar a lo grande.
+        Únete al grupo de WhatsApp para coordinarlo todo:
+        la fecha, el lugar y los detalles van por ahí.
       </p>
-      <a class="cta" href="https://chat.whatsapp.com/REEMPLAZAR_CON_TU_ENLACE" target="_blank" rel="noopener">
+      <a class="cta reveal" style="--d: .6s" href="https://chat.whatsapp.com/REEMPLAZAR_CON_TU_ENLACE" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2.05 22l5.27-1.38a9.87 9.87 0 0 0 4.72 1.2h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67c2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.05-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23m-2.35 4.02c-.16 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1 2.56.13.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.2-.58.2-1.07.14-1.18-.06-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.54.07-.25-.13-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.46-.01"/></svg>
-        Sumate al grupo
+        Únete al grupo
       </a>
-      <p class="fine-print">Ni una palabra a la cumpleañera 🙊</p>
+      <p class="fine-print reveal" style="--d: .75s">Ni una palabra a la cumpleañera 🙊</p>
     </section>
 
   </main>
@@ -260,12 +341,18 @@
     // ---------- Abrir sobre ----------
     const scene = document.getElementById("scene");
     const card = document.getElementById("card");
-    document.getElementById("openBtn").addEventListener("click", () => {
-      scene.classList.add("open");
-      card.setAttribute("aria-hidden", "false");
-      requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add("in")));
-      burst();
-    });
+    const openBtn = document.getElementById("openBtn");
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    openBtn.addEventListener("click", () => {
+      openBtn.classList.add("pop");
+      setTimeout(() => {
+        scene.classList.add("open");
+        card.setAttribute("aria-hidden", "false");
+        requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add("in")));
+        burst();
+      }, reduced ? 0 : 330);
+    }, { once: true });
 
     // ---------- Confetti ----------
     const canvas = document.getElementById("confetti");
@@ -281,14 +368,14 @@
     addEventListener("resize", resize);
     resize();
 
-    function burst() {
-      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      for (let i = 0; i < 120; i++) {
+    function spawn(x, y, angle, count) {
+      for (let i = 0; i < count; i++) {
+        const a = angle + (Math.random() - .5) * 1.1;
+        const speed = 8 + Math.random() * 8;
         pieces.push({
-          x: innerWidth / 2 + (Math.random() - .5) * 80,
-          y: innerHeight * 0.45,
-          vx: (Math.random() - .5) * 11,
-          vy: -Math.random() * 12 - 4,
+          x, y,
+          vx: Math.cos(a) * speed,
+          vy: Math.sin(a) * speed,
           w: 5 + Math.random() * 6,
           h: 8 + Math.random() * 6,
           rot: Math.random() * Math.PI,
@@ -297,6 +384,14 @@
           life: 140 + Math.random() * 60,
         });
       }
+    }
+
+    function burst() {
+      if (reduced) return;
+      // Doble cañonazo desde abajo a los costados + lluvia central
+      spawn(innerWidth * 0.1, innerHeight * 0.75, -Math.PI / 3, 50);
+      spawn(innerWidth * 0.9, innerHeight * 0.75, -Math.PI * 2 / 3, 50);
+      spawn(innerWidth * 0.5, innerHeight * 0.5, -Math.PI / 2, 40);
       if (!raf) tick();
     }
 
