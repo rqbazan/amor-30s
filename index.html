@@ -8,21 +8,23 @@
   <!-- Vista previa al compartir por WhatsApp: a propósito no revela nada -->
   <meta property="og:title" content="Tienes una invitación 💌" />
   <meta property="og:description" content="Toca para abrirla. Es secreto 🤫" />
-  <meta name="theme-color" content="#141230" />
+  <meta name="theme-color" content="#fff7fb" />
 
   <style>
     :root {
-      --bg: #141230;
-      --bg-2: #221d4e;
-      --card: #fffaf2;
-      --ink: #2b2350;
-      --ink-soft: #6b628f;
-      --gold: #d4a944;
-      --gold-deep: #b8860b;
-      --gold-soft: #f0d68a;
-      --accent: #e5537a;
+      --bg-1: #fff7fb;
+      --bg-2: #f1f6ff;
+      --card: #ffffff;
+      --ink: #3a2b5f;
+      --ink-soft: #6f639a;
+      --pink: #e5407e;
+      --pink-deep: #c2186f;
+      --pink-soft: #ff8fc2;
       --wa: #21b858;
       --wa-dark: #17953f;
+      /* Paleta del arco de globos de la foto */
+      --c1: #ff4d6d; --c2: #ff8a3d; --c3: #ffd23f;
+      --c4: #4fbf6b; --c5: #3fa9f5; --c6: #ff7ab8; --c7: #9b6ef3;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,28 +36,29 @@
       min-height: 100vh;
       min-height: 100dvh;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: radial-gradient(140% 100% at 50% 0%, var(--bg-2) 0%, var(--bg) 70%);
+      background: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
       color: var(--ink);
       display: grid;
       place-items: center;
-      padding: calc(16px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom));
+      padding: calc(16px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
       overflow-x: hidden;
       overscroll-behavior: none;
     }
 
     .serif { font-family: Georgia, "Times New Roman", serif; }
 
-    /* ---------- Estrellitas de fondo ---------- */
-    .star {
+    /* ---------- Figuritas Memphis noventeras de fondo ---------- */
+    .doodle {
       position: fixed;
-      color: var(--gold-soft);
-      animation: twinkle 3s ease-in-out infinite;
+      opacity: .22;
       pointer-events: none;
       user-select: none;
+      font-weight: 700;
+      animation: drift 6s ease-in-out infinite alternate;
     }
-    @keyframes twinkle {
-      0%, 100% { opacity: .15; transform: scale(.8); }
-      50%      { opacity: .7;  transform: scale(1.1); }
+    @keyframes drift {
+      from { translate: 0 0; rotate: 0deg; }
+      to   { translate: 0 -12px; rotate: 18deg; }
     }
 
     /* ---------- Escena ---------- */
@@ -67,102 +70,151 @@
       z-index: 1;
     }
 
-    /* ---------- Sobre cerrado ---------- */
-    .envelope {
+    /* ---------- Piñata cerrada ---------- */
+    .pinata {
       cursor: pointer;
       border: none;
       background: none;
       width: 100%;
-      padding: 24px 8px;
-      color: var(--gold-soft);
+      padding: 0 8px 24px;
       -webkit-tap-highlight-color: transparent;
-      transition: opacity .3s ease;
     }
-    .envelope .halo {
-      position: relative;
+    .swing {
       display: inline-block;
+      transform-origin: 50% 0;
+      animation: swing 2.2s ease-in-out infinite alternate;
     }
-    /* Anillo que pulsa alrededor del sobre, invita a tocar */
-    .envelope .halo::before,
-    .envelope .halo::after {
-      content: "";
-      position: absolute;
-      inset: -18px;
-      border-radius: 50%;
-      border: 1.5px solid var(--gold-soft);
-      opacity: 0;
-      animation: ring 2.4s ease-out infinite;
+    @keyframes swing {
+      from { rotate: -7deg; }
+      to   { rotate: 7deg; }
     }
-    .envelope .halo::after { animation-delay: 1.2s; }
-    @keyframes ring {
-      0%   { transform: scale(.7); opacity: .5; }
-      100% { transform: scale(1.35); opacity: 0; }
+    .swing .string {
+      display: block;
+      width: 2px;
+      height: 46px;
+      margin: 0 auto;
+      background: linear-gradient(#cdc3e8, #a99ecf);
     }
-    .envelope .flap {
+    .swing .pi {
+      display: block;
       font-size: 84px;
       line-height: 1;
-      display: block;
-      animation: float 2.6s ease-in-out infinite;
-      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .45));
+      filter: drop-shadow(0 14px 22px rgba(90, 60, 140, .3));
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0) rotate(-2deg); }
-      50%      { transform: translateY(-10px) rotate(2deg); }
-    }
-    .envelope .hint {
+    .pinata .hint {
       display: block;
       margin-top: 26px;
       font-size: 15px;
       letter-spacing: .16em;
       text-transform: uppercase;
+      color: var(--ink);
       opacity: .85;
     }
-    .envelope .sub {
+    .pinata .sub {
       display: block;
       margin-top: 8px;
       font-size: 13px;
-      color: #b9b2dd;
+      color: var(--ink-soft);
     }
 
-    /* Pop de salida al tocar el sobre */
-    .envelope.pop { pointer-events: none; }
-    .envelope.pop .flap {
-      animation: pop .38s cubic-bezier(.5, 1.5, .6, 1) forwards;
+    /* Piñatazo de salida */
+    .pinata.hit { pointer-events: none; }
+    .pinata.hit .swing {
+      animation: thrash .5s ease-in-out forwards;
     }
-    .envelope.pop .hint,
-    .envelope.pop .sub,
-    .envelope.pop .halo::before,
-    .envelope.pop .halo::after { opacity: 0; transition: opacity .2s ease; animation: none; }
-    @keyframes pop {
-      35%  { transform: scale(1.18) rotate(0deg); opacity: 1; }
-      100% { transform: scale(.4) rotate(8deg); opacity: 0; }
+    .pinata.hit .hint,
+    .pinata.hit .sub { opacity: 0; transition: opacity .25s ease; }
+    @keyframes thrash {
+      20% { rotate: 14deg; }
+      40% { rotate: -16deg; }
+      60% { rotate: 10deg; scale: 1.08; }
+      80% { rotate: -8deg; scale: 1.02; }
+      100% { rotate: 0deg; scale: .3; opacity: 0; }
+    }
+
+    /* ---------- Arco de globos ---------- */
+    .cardWrap {
+      display: none;
+      position: relative;
+    }
+    .scene.open .pinata { display: none; }
+    .scene.open .cardWrap { display: block; }
+
+    .arch {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .balloon {
+      position: absolute;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 28%, rgba(255, 255, 255, .75), rgba(255, 255, 255, 0) 45%),
+        var(--c);
+      animation:
+        balloonIn .5s cubic-bezier(.3, 1.4, .5, 1) both var(--d, 0s),
+        bob 3.4s ease-in-out infinite alternate calc(var(--d, 0s) + .5s);
+    }
+    .balloon::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -7px;
+      transform: translateX(-50%);
+      border: 4px solid transparent;
+      border-top: 5px solid var(--c);
+    }
+    @keyframes balloonIn {
+      from { opacity: 0; scale: 0; }
+      to   { opacity: 1; scale: 1; }
+    }
+    @keyframes bob {
+      from { translate: 0 0; }
+      to   { translate: 0 -5px; }
     }
 
     /* ---------- Tarjeta ---------- */
     .card {
+      position: relative;
+      z-index: 1;
       background: var(--card);
       border-radius: 18px;
-      padding: 34px 22px 30px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, .5);
-      display: none;
+      padding: 44px 22px 30px;
+      box-shadow: 0 24px 50px rgba(90, 60, 140, .22);
+      overflow: hidden;
       opacity: 0;
       transform: translateY(34px) scale(.94);
       transition: opacity .55s ease, transform .65s cubic-bezier(.2, .9, .25, 1.15);
-      position: relative;
+    }
+    .cardWrap.in .card { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* Banderines colgando del borde superior */
+    .banner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 3px;
       overflow: hidden;
     }
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 9px;
-      border: 1px solid var(--gold);
-      border-radius: 12px;
-      pointer-events: none;
-      opacity: .55;
+    .banner i {
+      flex: none;
+      width: 18px;
+      height: 15px;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
     }
-    .scene.open .envelope { display: none; }
-    .scene.open .card { display: block; }
-    .scene.open .card.in { opacity: 1; transform: translateY(0) scale(1); }
+    .banner i:nth-child(7n+1) { background: var(--c1); }
+    .banner i:nth-child(7n+2) { background: var(--c3); }
+    .banner i:nth-child(7n+3) { background: var(--c5); }
+    .banner i:nth-child(7n+4) { background: var(--c6); }
+    .banner i:nth-child(7n+5) { background: var(--c4); }
+    .banner i:nth-child(7n+6) { background: var(--c7); }
+    .banner i:nth-child(7n+7) { background: var(--c2); }
 
     /* Contenido en cascada: cada bloque entra con su propio delay (--d) */
     .card .reveal {
@@ -170,15 +222,15 @@
       transform: translateY(16px);
       transition: opacity .5s ease var(--d, 0s), transform .5s cubic-bezier(.2, .8, .3, 1.1) var(--d, 0s);
     }
-    .scene.open .card.in .reveal { opacity: 1; transform: none; }
+    .cardWrap.in .reveal { opacity: 1; transform: none; }
 
-    .shh { font-size: 42px; line-height: 1; }
+    .shh { font-size: 40px; line-height: 1; }
     .kicker {
-      margin-top: 14px;
+      margin-top: 12px;
       font-size: 12px;
       letter-spacing: .28em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--pink);
       font-weight: 600;
     }
     h1 {
@@ -187,10 +239,10 @@
       font-weight: 400;
       color: var(--ink);
     }
-    /* Nombre con brillo dorado que recorre el texto */
+    /* Nombre con brillo rosado glitter, como el cartel de la foto */
     h1 em {
       font-style: italic;
-      background: linear-gradient(100deg, var(--gold-deep) 20%, var(--gold-soft) 50%, var(--gold) 80%);
+      background: linear-gradient(100deg, var(--pink-deep) 20%, var(--pink-soft) 50%, var(--pink) 80%);
       background-size: 200% 100%;
       -webkit-background-clip: text;
       background-clip: text;
@@ -201,33 +253,38 @@
       0%, 100% { background-position: 0% 0; }
       50%      { background-position: 100% 0; }
     }
-    .divider {
-      margin: 18px auto;
-      width: 70px;
-      height: 1px;
-      background: var(--gold);
-      opacity: .6;
-      position: relative;
+
+    /* Sticker de la temática */
+    .theme-badge {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--pink-deep);
+      background: #fff0f7;
+      border: 2px dashed var(--pink-soft);
+      border-radius: 100px;
+      rotate: -2deg;
     }
-    .divider::after {
-      content: "✦";
-      position: absolute;
-      top: -9px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--card);
-      padding: 0 8px;
-      color: var(--gold);
-      font-size: 11px;
+
+    /* Mesa de dulces en miniatura */
+    .candy {
+      margin-top: 16px;
+      font-size: 19px;
+      letter-spacing: .45em;
+      padding-left: .45em; /* compensa el letter-spacing del último emoji */
     }
+
     .body-text {
+      margin: 14px auto 0;
       font-size: 16px;
       line-height: 1.65;
       color: var(--ink-soft);
-      max-width: 34ch;
-      margin: 0 auto;
+      max-width: 36ch;
     }
-    .body-text strong { color: var(--ink); }
+    .body-text strong { color: var(--pink-deep); }
+    .body-text + .body-text { margin-top: 10px; }
 
     .cta {
       display: flex;
@@ -235,7 +292,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-top: 24px;
+      margin-top: 22px;
       background: linear-gradient(180deg, var(--wa), var(--wa-dark));
       color: #fff;
       text-decoration: none;
@@ -265,13 +322,13 @@
       margin-top: 16px;
       font-size: 12.5px;
       color: var(--ink-soft);
-      opacity: .8;
+      opacity: .85;
     }
 
     /* ---------- Pantallas más grandes ---------- */
     @media (min-width: 480px) {
-      .card { padding: 42px 32px 36px; }
-      .envelope .flap { font-size: 96px; }
+      .card { padding: 48px 32px 36px; }
+      .swing .pi { font-size: 96px; }
       .body-text { font-size: 16.5px; }
       .cta { display: inline-flex; width: auto; padding: 15px 30px; }
       .cta:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(23, 149, 63, .4); }
@@ -286,7 +343,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .envelope .flap, .star, .halo::before, .halo::after, .cta, h1 em { animation: none !important; }
+      .swing, .doodle, .balloon, .cta, h1 em { animation: none !important; }
+      .balloon { opacity: 1; }
       .card, .card .reveal { transition-duration: .25s; transition-delay: 0s; }
     }
   </style>
@@ -297,67 +355,127 @@
 
   <main class="scene" id="scene">
 
-    <!-- Sobre cerrado -->
-    <button class="envelope" id="openBtn" aria-label="Abrir invitación">
-      <span class="halo"><span class="flap">💌</span></span>
+    <!-- Piñata cerrada -->
+    <button class="pinata" id="openBtn" aria-label="Abrir invitación">
+      <span class="swing">
+        <span class="string"></span>
+        <span class="pi">🪅</span>
+      </span>
       <span class="hint serif">Tienes una invitación</span>
-      <span class="sub">Toca el sobre para abrirla</span>
+      <span class="sub">Toca la piñata para abrirla</span>
     </button>
 
-    <!-- Tarjeta -->
-    <section class="card" id="card" aria-hidden="true">
-      <div class="shh reveal" style="--d: .05s">🤫</div>
-      <p class="kicker reveal" style="--d: .15s">Shhh… es secreto</p>
-      <h1 class="serif reveal" style="--d: .25s">Fiesta sorpresa<br />para <em>Dayanne</em></h1>
-      <div class="divider reveal" style="--d: .35s"></div>
-      <p class="body-text reveal" style="--d: .45s">
-        Se vienen sus <strong>30</strong> y lo vamos a celebrar a lo grande.
-        Únete al grupo de WhatsApp para coordinarlo todo:
-        la fecha, el lugar y los detalles van por ahí.
-      </p>
-      <a class="cta reveal" style="--d: .6s" href="https://chat.whatsapp.com/REEMPLAZAR_CON_TU_ENLACE" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2.05 22l5.27-1.38a9.87 9.87 0 0 0 4.72 1.2h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67c2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.05-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23m-2.35 4.02c-.16 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1 2.56.13.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.2-.58.2-1.07.14-1.18-.06-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.54.07-.25-.13-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.46-.01"/></svg>
-        Únete al grupo
-      </a>
-      <p class="fine-print reveal" style="--d: .75s">Ni una palabra a la cumpleañera 🙊</p>
-    </section>
+    <!-- Arco de globos + tarjeta -->
+    <div class="cardWrap" id="cardWrap">
+      <div class="arch" id="arch" aria-hidden="true"></div>
+      <section class="card" id="card" aria-hidden="true">
+        <div class="banner" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="shh reveal" style="--d: .05s">🤫</div>
+        <p class="kicker reveal" style="--d: .15s">Shhh… es secreto</p>
+        <h1 class="serif reveal" style="--d: .25s">Fiesta sorpresa<br />para <em>Dayanne</em></h1>
+        <p class="theme-badge reveal" style="--d: .35s">📼 Temática: los 90s 🪩</p>
+        <div class="candy reveal" style="--d: .45s" aria-hidden="true">🪅🍭🎈🍿🧸</div>
+        <p class="body-text reveal" style="--d: .55s">
+          Se vienen sus <strong>30 añitos</strong> y los vamos a celebrar con un
+          cumpleaños como los de antes: piñata, gelatina, canchita y bolsita
+          de sorpresas. Ve pensando tu look más noventero.
+        </p>
+        <p class="body-text reveal" style="--d: .65s">
+          Únete al grupo de WhatsApp para coordinarlo todo:
+          la fecha, el lugar y los detalles van por ahí.
+        </p>
+        <a class="cta reveal" style="--d: .8s" href="https://chat.whatsapp.com/REEMPLAZAR_CON_TU_ENLACE" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2.05 22l5.27-1.38a9.87 9.87 0 0 0 4.72 1.2h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67c2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.05-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23m-2.35 4.02c-.16 0-.43.06-.66.31-.22.25-.87.85-.87 2.07 0 1.22.89 2.4 1 2.56.13.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.2-.58.2-1.07.14-1.18-.06-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.54.07-.25-.13-1.05-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.46-.01"/></svg>
+          Únete al grupo
+        </a>
+        <p class="fine-print reveal" style="--d: .95s">Ni una palabra a la cumpleañera 🙊</p>
+      </section>
+    </div>
 
   </main>
 
   <script>
-    // ---------- Estrellitas ----------
-    const stars = ["✦", "✧", "·", "✦", "·"];
-    for (let i = 0; i < 14; i++) {
+    const PALETTE = ["#ff4d6d", "#ff8a3d", "#ffd23f", "#4fbf6b", "#3fa9f5", "#ff7ab8", "#9b6ef3", "#ffffff"];
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // ---------- Figuritas Memphis de fondo ----------
+    const SHAPES = ["▲", "●", "✖", "〰", "■", "★"];
+    for (let i = 0; i < 16; i++) {
       const s = document.createElement("span");
-      s.className = "star";
-      s.textContent = stars[i % stars.length];
+      s.className = "doodle";
+      s.textContent = SHAPES[i % SHAPES.length];
+      s.style.color = PALETTE[i % 7];
       s.style.left = Math.random() * 100 + "vw";
       s.style.top = Math.random() * 100 + "vh";
-      s.style.fontSize = 8 + Math.random() * 10 + "px";
-      s.style.animationDelay = Math.random() * 3 + "s";
+      s.style.fontSize = 10 + Math.random() * 12 + "px";
+      s.style.animationDelay = Math.random() * 4 + "s";
+      s.style.animationDuration = 4 + Math.random() * 4 + "s";
       document.body.appendChild(s);
     }
 
-    // ---------- Abrir sobre ----------
+    // ---------- Arco de globos ----------
     const scene = document.getElementById("scene");
-    const card = document.getElementById("card");
+    const cardWrap = document.getElementById("cardWrap");
+    const arch = document.getElementById("arch");
+
+    function buildArch() {
+      if (!scene.classList.contains("open")) return;
+      arch.innerHTML = "";
+      const W = cardWrap.clientWidth;
+      const R = (W - 36) / 2;
+      const k = 0.8;                       // arco achatado, como el de la foto
+      const H = Math.round(R * k) + 48;
+      arch.style.height = H + "px";
+      cardWrap.style.paddingTop = (H - 54) + "px";  // los globos se asoman tras la tarjeta
+
+      const rows = [
+        { r: R, n: 12, size: 30 },
+        { r: R - 27, n: 10, size: 23 },
+      ];
+      let idx = 0;
+      for (const row of rows) {
+        for (let i = 0; i < row.n; i++) {
+          const t = row.n === rows[0].n ? i / (row.n - 1) : (i + 0.5) / row.n;
+          const a = Math.PI * (1 - t);
+          const s = row.size + (Math.random() * 8 - 4);
+          const x = W / 2 + row.r * Math.cos(a);
+          const y = H - 8 - row.r * k * Math.sin(a);
+          const b = document.createElement("span");
+          b.className = "balloon";
+          b.style.width = b.style.height = s + "px";
+          b.style.left = x - s / 2 + "px";
+          b.style.top = y - s / 2 + "px";
+          b.style.setProperty("--c", PALETTE[idx % PALETTE.length]);
+          b.style.setProperty("--d", (0.25 + idx * 0.04) + "s");
+          arch.appendChild(b);
+          idx++;
+        }
+      }
+    }
+    addEventListener("resize", buildArch);
+
+    // ---------- Piñatazo ----------
     const openBtn = document.getElementById("openBtn");
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const card = document.getElementById("card");
+    const pi = openBtn.querySelector(".pi");
 
     openBtn.addEventListener("click", () => {
-      openBtn.classList.add("pop");
+      const r = pi.getBoundingClientRect();
+      const px = r.left + r.width / 2;
+      const py = r.top + r.height / 2;
+      openBtn.classList.add("hit");
       setTimeout(() => {
         scene.classList.add("open");
         card.setAttribute("aria-hidden", "false");
-        requestAnimationFrame(() => requestAnimationFrame(() => card.classList.add("in")));
-        burst();
-      }, reduced ? 0 : 330);
+        buildArch();
+        requestAnimationFrame(() => requestAnimationFrame(() => cardWrap.classList.add("in")));
+        burst(px, py);
+      }, reduced ? 0 : 480);
     }, { once: true });
 
     // ---------- Confetti ----------
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d");
-    const COLORS = ["#e5537a", "#d4a944", "#5ec6e8", "#8f7ff0", "#67d98b", "#f0d68a"];
     let pieces = [], raf = null;
 
     function resize() {
@@ -380,18 +498,18 @@
           h: 8 + Math.random() * 6,
           rot: Math.random() * Math.PI,
           vr: (Math.random() - .5) * .3,
-          color: COLORS[i % COLORS.length],
+          color: PALETTE[i % 7],
           life: 140 + Math.random() * 60,
         });
       }
     }
 
-    function burst() {
+    function burst(px, py) {
       if (reduced) return;
-      // Doble cañonazo desde abajo a los costados + lluvia central
-      spawn(innerWidth * 0.1, innerHeight * 0.75, -Math.PI / 3, 50);
-      spawn(innerWidth * 0.9, innerHeight * 0.75, -Math.PI * 2 / 3, 50);
-      spawn(innerWidth * 0.5, innerHeight * 0.5, -Math.PI / 2, 40);
+      // La piñata revienta donde estaba + cañonazos desde los costados
+      spawn(px, py, -Math.PI / 2, 70);
+      spawn(innerWidth * 0.1, innerHeight * 0.8, -Math.PI / 3, 40);
+      spawn(innerWidth * 0.9, innerHeight * 0.8, -Math.PI * 2 / 3, 40);
       if (!raf) tick();
     }
 
